@@ -12,12 +12,13 @@ Installing
 ==========
 
 You will need @lazy_regex.py@ from "my python
-library":http://github.com/adlaiff6/pyleif/.  Copy or symlink it in this
-directory.
+library":http://github.com/adlaiff6/pyleif/.  This is linked in as a submodule,
+so you should be able to just run @git submodule update --init pyleif@ and be
+good to go.
 
 Then, just symlink @axs@ somewhere in your PATH:
 
-<pre><code> $ ln /home/leif/git/axs/axs /home/leif/bin
+<pre><code> $ ln -s /home/leif/git/axs/axs /home/leif/bin/
  $ export PATH=$PATH:/home/leif/bin
  $ axs python
 ... stuff happens ...</code></pre>
