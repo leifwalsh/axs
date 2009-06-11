@@ -15,7 +15,6 @@ from subprocess import Popen, PIPE
 import sys
 
 from lazy_regex import LazyRegex
-from see import see
 import xapian
 
 
@@ -40,11 +39,6 @@ _OPTS = [(['-n', '--limit'], {'dest': 'limit',
                               'action': 'count',
                               'help': 'Increase debugging level'},
           0)]
-
-
-class AXSError(Exception):
-    """Base exception for axs."""
-    pass
 
 
 def parse_opts():
@@ -79,15 +73,19 @@ def reformat(par, length, height):
         while buf:
             word = buf[0]
             curlen += _word_length(word)
-            if curlen + (idx == height and 3 or 0) > length:
-                break
+            if height is not None and idx == height:
+                if curlen + 3 > length:
+                    break
+            else:
+                if curlen > length:
+                    break
             buf.pop(0)
             words.append(word)
             if word == '.':
                 break
             elif word.endswith('.'):
                 words.append('')
-        if idx == height - 1 and words[-1]:
+        if height is not None and idx == height - 1 and words[-1]:
             words.append('...')
         par[idx] = ' '.join(words).rstrip()
         idx += 1
@@ -98,8 +96,12 @@ def reformat(par, length, height):
         while curlen < length and buf:
             word = buf[0]
             curlen += _word_length(word)
-            if curlen + (idx == height and 3 or 0) > length:
-                break
+            if height is not None and idx == height:
+                if curlen + 3 > length:
+                    break
+            else:
+                if curlen > length:
+                    break
             buf.pop(0)
             words.append(word)
             if word == '.':
@@ -107,7 +109,7 @@ def reformat(par, length, height):
                 break
             elif word.endswith('.'):
                 words.append('')
-        if idx == height - 1 and words[-1]:
+        if height is not None and idx == height - 1 and words[-1]:
             words.append('...')
         par.append(' '.join(words).rstrip())
         idx += 1
@@ -159,7 +161,7 @@ def main(argv):
 
         description_pars.append(description)
 
-    desc_len = options.long and None or 3
+    desc_len = None if options.long else 3
     for desc in description_pars:
         reformat(desc, 74, desc_len)
 
@@ -177,12 +179,8 @@ def main(argv):
 if __name__ == '__main__':
     try:
         ret = main(sys.argv)
-    except AXSError:
-        print >> sys.stderr, 'Exception occurred'
-        traceback.print_exc(file=sys.stderr)
-        sys.exit(1)
     except Exception:
-        print >> sys.stderr, 'Very Bad Exception occurred'
+        print >> sys.stderr, 'Exception occurred'
         print_exc(file=sys.stderr)
         sys.exit(255)
     else:
