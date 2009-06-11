@@ -1,0 +1,69 @@
+axs
+===
+
+Searches the index created by
+"apt-xapian-index":http://packages.ubuntu.com/jaunty/apt-xapian-index.
+
+"Xapian":http://xapian.org (supposedly) does a great job of figuring out what
+you want (unlike @apt-cache search@).  This script uses that power to find
+programs in the apt database.
+
+Installing
+==========
+
+You will need @lazy_regex.py@ from "my python
+library":http://github.com/adlaiff6/pyleif/.  Copy or symlink it in this
+directory.
+
+Then, just symlink @axs@ somewhere in your PATH:
+
+<pre><code> $ ln /home/leif/git/axs/axs /home/leif/bin
+ $ export PATH=$PATH:/home/leif/bin
+ $ axs python
+... stuff happens ...</code></pre>
+
+Usage
+=====
+
+From @axs --help@:
+
+<pre><code>Usage: axs [options] <query>
+
+Searches the index created by apt-xapian-index.  Xapian does a very good job of
+figuring out what you want (unlike apt-cache search, which just searches text).  This
+utility uses that power to find programs in the apt database.  Unfortunately, program
+descriptions themselves, in fulltext at least, aren't stored in the index (or I can't
+find them), so this program has to call apt-cache for those descriptions anyway.
+
+Options:
+  -h, --help            show this help message and exit
+  -n NUM, --limit=NUM   Maximum number of elements to display (default: 5)
+  -L, --long            Show long descriptions (default: 3 lines)
+  -i FILE, --index=FILE
+                        Xapian index to parse (leave this alone)
+  -d, --debug           Increase debugging level</code></pre>
+
+Implementation headaches
+=======================
+
+For some horrible reason, Xapian seems unwilling to give me back the plaintext
+(in order) descriptions of packages.  It will gladly send me back keywords from
+the description in sorted order, but finding the correct permutation of these
+is sort of hard.
+
+Instead, I just farm out the work to @apt-cache show@ to get descriptions.
+
+Things that be broke
+====================
+
+Xapian doesn't know much about the packages other than their descriptions.
+Therefore, if you search for, for example, jelly beans, and you're really
+looking for the package @net-jelly-beans@, Xapian will sometimes get confused
+and pull up instead some obscure plugin for @net-jelly-beans@ (let's call it
+@libnjb-pooflavour.0@) if that plugin happens to mention the words 'jelly beans'
+in its description more than the main package does.
+
+Supposedly, there are plugins in the pipeline for @apt-xapian-index@, of which
+some may help fix this problem.  The project seems, in a lot of ways, dead, so I
+don't know when or if they will come out.  If I get sick of work someday, I
+might write some too.
