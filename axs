@@ -141,7 +141,7 @@ def main(argv):
         data = m.document.get_data()
         result = '%3d: %s %s[%3d%%]' % (m.rank + 1,
                                         data,
-                                        ''.join([' '] * (70 - len(data))),
+                                        ''.join([' '] * (68 - len(data))),
                                         m.percent)
         result_strings.append(result)
         aps = Popen(['apt-cache', 'show', data], stdout=PIPE)
