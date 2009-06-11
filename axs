@@ -14,7 +14,8 @@ from traceback import print_exc
 from subprocess import Popen, PIPE
 import sys
 
-from lazy_regex import LazyRegex
+import pyleif
+from pyleif.lazy_regex import LazyRegex
 import xapian
 
 
@@ -73,7 +74,7 @@ def reformat(par, length, height):
         while buf:
             word = buf[0]
             curlen += _word_length(word)
-            if height is not None and idx == height:
+            if height is not None and idx == height - 1:
                 if curlen + 3 > length:
                     break
             else:
@@ -96,7 +97,7 @@ def reformat(par, length, height):
         while curlen < length and buf:
             word = buf[0]
             curlen += _word_length(word)
-            if height is not None and idx == height:
+            if height is not None and idx == height - 1:
                 if curlen + 3 > length:
                     break
             else:
